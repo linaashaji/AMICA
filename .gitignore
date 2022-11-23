@@ -4,12 +4,14 @@ results/
 
 notebooks/
 *.ipynb
+.ipynb_checkpoints*
 
 data/
 *.csv
 *.zip
 
 __pycache__/
+*__pycache__/
 *.pyc
 
 .spyderproject
