@@ -5,12 +5,8 @@ Created on Feb 7
 
 """
 
-import math
-import numpy as np
-
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 class L2Loss(torch.nn.Module):
 
@@ -32,9 +28,13 @@ class L2Loss(torch.nn.Module):
         total_loss = 0
         for inp, tar, m in zip(inputs, targets, mask):
             if(inp is not None):
-                inp_m = inp[m]
-                tar_m = tar[m]
-                total_loss += self.loss(inp_m, tar_m) 
+                if(inp.size[0] > 0):
+                    inp_m = inp[m]
+                    tar_m = tar[m]
+                    l = self.loss(inp_m, tar_m) 
+                    total_loss += l
+            else:
+                print('The Input is None')
                 
         return total_loss
  

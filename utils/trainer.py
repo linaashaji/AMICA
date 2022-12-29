@@ -15,7 +15,7 @@ import numpy as np
 timer = Timer()
 
 
-def run_epoch(model, log, data_iter, data_ctx, loss_compute, device, epoch, split, verbose=50):
+def run_epoch(model, log, data_iter, data_ctx, loss_compute, device, epoch, split, writer, verbose=50):
 
     
     start = time.time()
@@ -81,19 +81,27 @@ def run_epoch(model, log, data_iter, data_ctx, loss_compute, device, epoch, spli
             vout, _, _, _ = model(batch)
             vsorted = vout.flatten(0,1)[ind].reshape(batch_size,window_size,-1) 
             
-            
-
-        if total_loss_dict is None:
-            total_loss_dict = dict()
-            for loss_name in loss_dict.keys():
-                total_loss_dict[loss_name] = loss_dict[loss_name].detach().item() 
-        else:
-            for loss_name in total_loss_dict.keys():
-                total_loss_dict[loss_name] += loss_dict[loss_name].detach().item() 
+                
+            if total_loss_dict is None:
+                total_loss_dict = dict()
+                for loss_name in loss_dict.keys():
+                    total_loss_dict[loss_name] = loss_dict[loss_name].detach().item() 
+            else:
+                for loss_name in total_loss_dict.keys():
+                    total_loss_dict[loss_name] += loss_dict[loss_name].detach().item() 
                 
 
         total_scenes +=1
         nb_scenes +=batch_size
+        
+        if writer is not None:
+
+            for loss_name in total_loss_dict.keys():
+                writer.global_step +=1
+                writer.add_scalar(f'step_{loss_name.capitalize()}/{split}',
+                    total_loss_dict[loss_name],
+                    writer.global_step)
+                
             
         if verbose > 0:
             if (i+1) % verbose == 0:
@@ -131,7 +139,7 @@ def train_epoch(model, data_ctx, log, loss_compute_train, loss_compute_val, trai
             
 
         epoch_scores =  run_epoch_func(model, log, loader, data_ctx, loss_compute, device,
-                                             epoch, split, verbose=verbose)
+                                             epoch, split, writer, verbose=verbose)
 
         epoch_scores['epoch'] = epoch
         scores[split].append( epoch_scores )
@@ -139,7 +147,7 @@ def train_epoch(model, data_ctx, log, loss_compute_train, loss_compute_val, trai
         if writer is not None:
 
             for loss_name in epoch_scores['loss_dict'].keys():
-                writer.add_scalar(f'{loss_name.capitalize()}/{split}',
+                writer.add_scalar(f'epoch_{loss_name.capitalize()}/{split}',
                     epoch_scores['loss_dict'][loss_name],
                     epoch + 1)
             

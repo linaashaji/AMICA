@@ -61,6 +61,8 @@ log = open(os.path.join(cfg.log_dir, 'log.txt'), 'a+')
 
 print_log("time str: {}".format(time_str), log)
 writer = SummaryWriter(cfg.tb_dir)
+writer.global_step = 0
+
 tb_ind = 0
 
 print_log(f" \n Model name: {cfg.model_name}", log)
