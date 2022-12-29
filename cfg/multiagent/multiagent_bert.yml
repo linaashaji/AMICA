@@ -10,16 +10,17 @@ data_loader:
   batch_size                  : 16
   window                      : 5000
   stride                      : 1000
+  num_workers                 : 32
 
 # ------------------- Model -------------------------
 
 model_id: MultiIDModel
-model_name: model_1
+model_name: model_newexp_2
 transformer:
   input_dim       : [2, 3, 2, 1, 2, 2, 2, 1, 1, 4]
   input_max_len   : [699, 350, 699, 233, 699, 350, 699, 699, 350, 233]
   backprop_window : 250
-  nlayer          : 4
+  nlayer          : 1
   d_model         : 256
   dff             : 512
   num_heads       : 8

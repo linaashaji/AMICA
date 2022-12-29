@@ -91,6 +91,7 @@ traindata = SynCanDataset(data_loader_ctx, 'train')
 train_loader = DataLoader(
         traindata,
         batch_size = BATCH_SIZE,
+        num_workers=cfg.data_loader.num_workers,
         shuffle = True
 )
 
@@ -99,7 +100,8 @@ valdata = SynCanDataset(data_loader_ctx, 'val')
 val_loader = DataLoader(
         valdata,
         batch_size = BATCH_SIZE,
-        shuffle = True
+        num_workers=cfg.data_loader.num_workers,
+        shuffle = False
 )
 
 
