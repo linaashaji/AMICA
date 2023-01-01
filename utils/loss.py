@@ -28,7 +28,7 @@ class L2Loss(torch.nn.Module):
         total_loss = 0
         for inp, tar, m in zip(inputs, targets, mask):
             if(inp is not None):
-                if(inp.size[0] > 0):
+                if(inp.shape[0] > 0 and m.any()):
                     inp_m = inp[m]
                     tar_m = tar[m]
                     l = self.loss(inp_m, tar_m) 
