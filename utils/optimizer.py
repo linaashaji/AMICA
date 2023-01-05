@@ -53,6 +53,7 @@ class SimpleLossCompute:
         
         for loss_name in losses.keys():
             losses[loss_name] = losses[loss_name]
+            
         losses['total_loss'] = loss
         return losses
 

@@ -39,7 +39,7 @@ class SynCanDataset(Dataset):
         
         self.data = self.sliding_window(dataframe, window, stride)
         
-        if(split != 'test'):
+        if(split != 'test_real_life'):
             self.max_steps = self.calculate_maxpading(self.data)
         else: 
             self.max_steps = np.ones(10,) * window
@@ -71,6 +71,16 @@ class SynCanDataset(Dataset):
                 datalist.append(df.iloc[i:i+window].reset_index(drop=True))
 
         return datalist  
+    
+    @staticmethod
+    def data_label(df):
+        label = 0
+        for i in range(len(df)):
+            if(int(df['Label'][i] == 1)):
+                label = 1
+                break
+            
+        return label
     
     
     @staticmethod
@@ -163,7 +173,11 @@ class SynCanDataset(Dataset):
     def getitem(self, index):
 
         df = self.data[index]
+        label = self.data_label(df)
         d = {}
+        d['label'] = label
+        
+        
         idrange = np.arange(1,11)
         for ecu_id in idrange:
             
@@ -195,4 +209,6 @@ class SynCanDataset(Dataset):
             d[f'id{str(ecu_id)}'] = vmasked, steps, mask, mask_bert
             d[f'orig_id{str(ecu_id)}'] = values_orig
             
+
+
         return d
