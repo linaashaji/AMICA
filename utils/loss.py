@@ -10,11 +10,12 @@ import torch.nn as nn
 
 class L2Loss(torch.nn.Module):
 
-    def __init__(self):
+    def __init__(self, per_sequence_loss=False):
         super(L2Loss, self).__init__()
     
         self.nb_ids = 10
         self.loss = nn.MSELoss()
+        self.per_sequence_loss = per_sequence_loss
         
     def forward(self, inputs, targets, mask, batch_size=None, batch_indices=None):
         """
@@ -27,13 +28,14 @@ class L2Loss(torch.nn.Module):
         To do: compare with weighted loss according to ID frequency 
         """
         total_loss = 0
+        if(self.per_sequence_loss):
+            assert batch_size is not None
+            assert batch_indices is not None
+            psl = torch.zeros(batch_size).to(inputs[0].device)
         
-        if(batch_size is not None):
-            per_sequence_loss = torch.zeros(batch_size).to(inputs[0].device)
-        else:
-            per_sequence_loss = None
-                    
-        if(batch_indices is not None):
+            
+            
+        if(self.per_sequence_loss):
             for inp, tar, m, b_ind in zip(inputs, targets, mask, batch_indices):
                 if(inp is not None):
                     if(inp.shape[0] > 0 and m.any()):
@@ -49,7 +51,7 @@ class L2Loss(torch.nn.Module):
                             
                             if(inp_m_.shape[0] > 0):
                                 sequence_loss = self.loss(inp_m_, tar_m_)
-                                per_sequence_loss[b] += sequence_loss
+                                psl[b] += sequence_loss
                             
         else:
             for inp, tar, m in zip(inputs, targets, mask):
@@ -60,6 +62,10 @@ class L2Loss(torch.nn.Module):
                         l = self.loss(inp_m, tar_m)
                         total_loss += l
                     
-        return total_loss, per_sequence_loss
+        if(self.per_sequence_loss):
+            return psl
+        else:
+            return total_loss
+
  
    
