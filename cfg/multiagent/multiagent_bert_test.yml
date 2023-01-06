@@ -7,7 +7,7 @@ data_path                    : data
 
 # ------------------- Feature Extractor -------------------------
 data_loader:
-  batch_size                  : 16
+  batch_size                  : 4
   window                      : 5000
   stride                      : 1000
   num_workers                 : 32
