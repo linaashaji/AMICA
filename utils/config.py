@@ -19,6 +19,7 @@ class Config:
         # data dir
         self.results_root_dir = os.path.expanduser(self.yml_dict['results_root_dir'])
         self.exp = os.path.expanduser(self.yml_dict['model_name'])
+        self.load_from = os.path.expanduser(self.yml_dict['load_from'])
         self.exp_teacher = self.yml_dict.get('model_teacher_name','None')
         # results dirs
         cfg_root_dir = '/tmp/agentformer' if tmp else self.results_root_dir
@@ -26,6 +27,7 @@ class Config:
 
         self.cfg_dir = '%s/%s' % (self.cfg_root_dir, cfg_id)
         self.model_dir = '%s/%s/models' % (self.cfg_dir, self.exp)
+        self.load_from = '%s/%s/models' % (self.cfg_root_dir, self.load_from)
         self.model_teacher_dir = '%s/%s/models' % (self.cfg_dir, self.exp_teacher)
         
         self.result_dir = '%s/%s/results' % (self.cfg_dir, self.exp)

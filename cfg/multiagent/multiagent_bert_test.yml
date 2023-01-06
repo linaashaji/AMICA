@@ -16,7 +16,7 @@ data_loader:
 
 model_id: MultiIDModel
 model_name: model_test_1
-load_from: model_newexp_3
+load_from: multiagent_bert/model_newexp_3
 
 transformer:
   input_dim       : [2, 3, 2, 1, 2, 2, 2, 1, 1, 4]

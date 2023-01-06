@@ -33,7 +33,7 @@ from models.model import MultiIDModel
 timer = Timer()
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--cfg', default='multiagent_bert')
+parser.add_argument('--cfg', default='multiagent_bert_test')
 parser.add_argument('--tmp', action='store_true', default=False)
 
 args = parser.parse_args()
@@ -121,7 +121,7 @@ else:
 loss_compute_val = SimpleLossCompute(criterion, None)
 
 ### Loading pretrained model
-state = load_state_best(model, None, cfg.model_path, device)
+state = load_state_best(model, None, cfg.load_from, device)
 
 #%%
 
