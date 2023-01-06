@@ -15,7 +15,8 @@ class L2Loss(torch.nn.Module):
     
         self.nb_ids = 10
         self.loss = nn.MSELoss()
-    def forward(self, inputs, targets, mask):
+        
+    def forward(self, inputs, targets, mask, batch_size=None, batch_indices=None):
         """
         Parameters
         ----------
@@ -26,16 +27,39 @@ class L2Loss(torch.nn.Module):
         To do: compare with weighted loss according to ID frequency 
         """
         total_loss = 0
-        for inp, tar, m in zip(inputs, targets, mask):
-            if(inp is not None):
-                if(inp.shape[0] > 0 and m.any()):
-                    inp_m = inp[m]
-                    tar_m = tar[m]
-                    l = self.loss(inp_m, tar_m) 
-                    total_loss += l
-            else:
-                print('The Input is None')
-                
-        return total_loss
+        
+        if(batch_size is not None):
+            per_sequence_loss = torch.zeros(batch_size).to(inputs[0].device)
+        else:
+            per_sequence_loss = None
+                    
+        if(batch_indices is not None):
+            for inp, tar, m, b_ind in zip(inputs, targets, mask, batch_indices):
+                if(inp is not None):
+                    if(inp.shape[0] > 0 and m.any()):
+                        inp_m = inp[m]
+                        tar_m = tar[m]
+                        b_ind_m = b_ind[m]
+                        l = self.loss(inp_m, tar_m)
+                        total_loss += l.mean()
+                        
+                        for b in range(batch_size):
+                            inp_m_ = inp_m[b_ind_m == b]
+                            tar_m_ = tar_m[b_ind_m == b]
+                            
+                            if(inp_m_.shape[0] > 0):
+                                sequence_loss = self.loss(inp_m_, tar_m_)
+                                per_sequence_loss[b] += sequence_loss
+                            
+        else:
+            for inp, tar, m in zip(inputs, targets, mask):
+                if(inp is not None):
+                    if(inp.shape[0] > 0 and m.any()):
+                        inp_m = inp[m]
+                        tar_m = tar[m]
+                        l = self.loss(inp_m, tar_m)
+                        total_loss += l
+                    
+        return total_loss, per_sequence_loss
  
    

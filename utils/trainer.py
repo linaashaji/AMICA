@@ -72,7 +72,7 @@ def run_epoch(model, log, data_iter, data_ctx, loss_compute, device, epoch, spli
             iinp = isorted[:, j: j+backprop_window]
             mbinp = mbsorted[:, j: j+backprop_window]
 
-            vdeltaout, vtarget, mbout = model.deltaoperation(vinp, voriginp, mbinp, iinp)
+            vdeltaout, vtarget, mbout, bout = model.deltaoperation(vinp, voriginp, mbinp, iinp)
             
 
             loss_dict = loss_compute(vdeltaout, vtarget, mbout)    

@@ -69,17 +69,20 @@ class MultiIDModel(nn.Module):
         
         out = self.delta_encoder_emb(x, xid)
         out = self.delta_temporal_encoder(out, None)
+        batch_tensor = torch.arange(len(out)).repeat(out.shape[1],1).T
         
         outf=out.flatten(0,1)
         xidf=xid.flatten(0,1)
         xorigf = xorig.flatten(0,1)
         mask_bertf = mask_bert.flatten(0,1)
+        batch_tensorf = batch_tensor.flatten(0,1)
         
-        out_list, orig_list, maskbert_list = [], [], []
+        out_list, orig_list, maskbert_list, batch_list = [], [], [], []
         for i in range(self.nb_ids):
             out_temp = self.out_generator[i](outf[xidf==i])
             orig_temp = xorigf[xidf==i][...,:self.input_dim[i]]
             mask_bert_temp = mask_bertf[xidf==i]
+            batch_temp = batch_tensorf[xidf==i]
             
             if(out_temp.shape[0] == 0):
                 out_list.append(None)
@@ -89,11 +92,13 @@ class MultiIDModel(nn.Module):
             if(orig_temp.shape[0] == 0):
                 orig_list.append(None)
                 maskbert_list.append(None)
+                batch_list.append(None)
             else:
                 orig_list.append(orig_temp)
                 maskbert_list.append(mask_bert_temp)
+                batch_list.append(batch_temp)
                 
-        return out_list, orig_list, maskbert_list
+        return out_list, orig_list, maskbert_list, batch_list
 
     def forward(self, dictdata):
         
