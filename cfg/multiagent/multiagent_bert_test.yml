@@ -45,6 +45,6 @@ optim_params:
   loss                         : 'l2loss'
 
 
-print_freq                   : 200
+print_freq                   : 100
 model_save_freq              : 10
 
