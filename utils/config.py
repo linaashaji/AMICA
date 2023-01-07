@@ -19,9 +19,9 @@ class Config:
         # data dir
         self.results_root_dir = os.path.expanduser(self.yml_dict['results_root_dir'])
         self.exp = os.path.expanduser(self.yml_dict['model_name'])
-        self.load_from = None
-        if self.yml_dict['load_from'] is not None:
-            self.load_from = os.path.expanduser(self.yml_dict['load_from']) 
+        self.load_from = self.yml_dict.get('load_from','None')
+        if self.load_from is not None:
+            self.load_from = os.path.expanduser(self.load_from) 
             
         self.exp_teacher = self.yml_dict.get('model_teacher_name','None')
         # results dirs

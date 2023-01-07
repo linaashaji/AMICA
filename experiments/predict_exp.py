@@ -123,4 +123,10 @@ loss_compute_val = SimpleLossCompute(criterion, None)
 
 #%%
 
+print_log('\n',log)
+print_log(" Start loss statistics calculation ".center(70, "="), log)
+
+
 loss_mean = run_statistics(model, log, val_loader, data_loader_ctx, loss_compute_val, device, verbose=cfg.print_freq)
+
+print_log(f"the final mean loss is {loss_mean}", log)

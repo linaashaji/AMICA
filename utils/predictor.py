@@ -20,7 +20,9 @@ timer = Timer()
 def run_statistics(model, log, data_iter, data_ctx, loss_compute, device, verbose=50):
 
     model.eval()
-    losses = []
+    losses = 0.
+    losses_count = 0.
+
     window_size = data_ctx['window']
     backprop_window = data_ctx['backprop_window']
     nb_ids = 10
@@ -79,14 +81,13 @@ def run_statistics(model, log, data_iter, data_ctx, loss_compute, device, verbos
             
                 
             loss = loss_dict['loss'].mean() 
-            losses.append(loss)
-            
+            losses += float(loss)
+            losses_count += 1
+
         if verbose > 0:
             if (i+1) % verbose == 0:
-                print_log(" Update step : %d Mean Loss : %f samples per Sec : %f " %
-                      ( i, np.array(losses).mean(), log))
-                
-    
-    mean_loss = np.array(losses).mean()
+                print_log(" Update step : %d Mean Loss : %f " %
+                      ( i, losses / losses_count), log)
+
         
-    return mean_loss
+    return losses / losses_count
