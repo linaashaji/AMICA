@@ -7,7 +7,7 @@ data_path                    : data
 
 # ------------------- Feature Extractor -------------------------
 data_loader:
-  batch_size                  : 4
+  batch_size                  : 16
   window                      : 5000
   stride                      : 1000
   num_workers                 : 32
@@ -23,7 +23,6 @@ load_from: multiagent_bert/model_newexp_3
 optim_params:  
   loss                         : 'l2loss'
 
-
 print_freq                   : 100
-model_save_freq              : 10
+
 
