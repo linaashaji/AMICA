@@ -19,6 +19,7 @@ timer = Timer()
 
 def run_statistics(model, log, data_iter, data_ctx, loss_compute, device, verbose=50):
 
+    model.eval()
     losses = []
     window_size = data_ctx['window']
     backprop_window = data_ctx['backprop_window']

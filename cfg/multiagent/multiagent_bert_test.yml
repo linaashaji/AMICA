@@ -18,33 +18,10 @@ model_id: MultiIDModel
 model_name: model_test_1
 load_from: multiagent_bert/model_newexp_3
 
-transformer:
-  input_dim       : [2, 3, 2, 1, 2, 2, 2, 1, 1, 4]
-  input_max_len   : [699, 350, 699, 233, 699, 350, 699, 699, 350, 233]
-  backprop_window : 250
-  nlayer          : 1
-  d_model         : 256
-  dff             : 512
-  num_heads       : 8
-  dropout_rate    : 0.1
-  xavier_int      : True
-
 
 # ------------------- Training Parameters -------------------------
-
-
-num_epochs                   : 100
-
-optim_params:
-  optim                        : 'adam'
-  initial_lr                   : 1e-4
-  warmup_step                  : -1
-  scheduler_step_size          : -1
-  gradient_max_norm            : -1
-  
+optim_params:  
   loss                         : 'l2loss'
 
-
 print_freq                   : 200
-model_save_freq              : 10
 

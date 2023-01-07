@@ -21,7 +21,7 @@ from utils.SynCanDataset import SynCanDataset
 from torch.utils.data import DataLoader
 
 from utils.timer import Timer
-from utils.utils import seed_all, load_state_best, print_log, get_timestring
+from utils.utils import seed_all, load_model_best, print_log, get_timestring
 from utils.config import Config
 
 from utils.predictor import run_statistics
@@ -44,23 +44,31 @@ seed_all(cfg.seed)
 torch.set_default_dtype(torch.float32)
 device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-data_loader_ctx = cfg.data_loader
-data_loader_ctx['data_path'] = cfg.data_path
-
-
-model_ctx = cfg.transformer
-optim_ctx = cfg.optim_params
-
-data_loader_ctx['backprop_window'] = model_ctx['backprop_window']
-
 time_str = get_timestring()
 log = open(os.path.join(cfg.log_dir, 'log_predict.txt'), 'a+')
 
 print_log("time str: {}".format(time_str), log)
-writer = SummaryWriter(cfg.tb_dir)
-writer.global_step = 0
 
-tb_ind = 0
+
+
+print_log('\n',log)
+print_log(" Instanciating model ".center(70, "="), log)
+
+
+### Loading pretrained model
+model, state = load_model_best(MultiIDModel, cfg.load_from, device)
+
+n_total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print_log(f" Number of learnable params {n_total_params}".ljust(30), log)
+
+
+model_ctx = state['model_params']
+optim_ctx = cfg.optim_params
+
+data_loader_ctx = cfg.data_loader
+data_loader_ctx['data_path'] = cfg.data_path
+data_loader_ctx['backprop_window'] = model_ctx['backprop_window']
+
 
 print_log(f" \n Model name: {cfg.model_name}", log)
 print_log(" \n DataLoader parameters", log)
@@ -101,15 +109,6 @@ print_log(f"Time spend : {timer.tak()}", log)
 
 
 
-print_log('\n',log)
-print_log(" Instanciating model ".center(70, "="), log)
-
-model = MultiIDModel(model_ctx).to(device)
-
-
-n_total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print_log(f" Number of learnable params {n_total_params}".ljust(30), log)
-
 ### Loss
 if optim_ctx['loss']=="l2loss":
     criterion = L2Loss(per_sequence_loss=True)
@@ -120,8 +119,7 @@ else:
 
 loss_compute_val = SimpleLossCompute(criterion, None)
 
-### Loading pretrained model
-state = load_state_best(model, None, cfg.load_from, device)
+
 
 #%%
 

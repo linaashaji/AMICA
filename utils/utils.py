@@ -156,11 +156,15 @@ def load_model_best(model_fn, model_path, device):
                 model.load_state_dict(model_dict)
                 model.to(device)
                 
+            return model, checkpoint
+                
         else:
             print("=== The model doesn't exist : training from scratch")
+            return None, None
     else:
         print("=== The model doesn't exist : training from scratch")
-    return model        
+        return None, None
+    
         
         
 def seed_all(seed_value):
