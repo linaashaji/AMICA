@@ -74,13 +74,14 @@ class SynCanDataset(Dataset):
     
     @staticmethod
     def data_label(df):
-        label = 0
-        for i in range(len(df)):
-            if(int(df['Label'][i] == 1)):
-                label = 1
-                break
+        label = np.array(df['Label'], np.float64)
+        
+        if((label > 0).any()):
+            label_ = 1
+        else:
+            label_ = 0
             
-        return label
+        return label_
     
     
     @staticmethod

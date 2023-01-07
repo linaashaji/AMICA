@@ -112,7 +112,7 @@ print_log(f"Nb samples in validation set {''.ljust(8)} : {len(valdata)}", log)
 if(args.val_test == 1):
     testdata = SynCanDataset(data_loader_ctx, args.test_file)
     test_loader = DataLoader(
-            valdata,
+            testdata,
             batch_size = BATCH_SIZE,
             num_workers=cfg.data_loader.num_workers,
             shuffle = False
