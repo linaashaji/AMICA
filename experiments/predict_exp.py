@@ -139,14 +139,20 @@ if(optim_ctx['threshold'] == - 1):
     print_log(f" Per Loss > 0.01 : {len(losses[losses > 0.01]) / len(losses)}", log)
     print_log(f" Per Loss > 0.1 : {len(losses[losses > 0.1]) / len(losses)}", log)
 
-
+    plt.figure()
     plt.hist(losses, range=(losses.min(), losses.max()))
     plt.show()
     plt.savefig(os.path.join(cfg.result_dir, 'normal_loss_histogram_minmax.png'))
 
+    plt.figure()
     plt.hist(losses, range=(losses.min(), 0.01))
     plt.show()
     plt.savefig(os.path.join(cfg.result_dir, 'normal_loss_histogram_001.png')) 
+
+    plt.figure()
+    plt.hist(losses, range=(losses.min(), 0.001))
+    plt.show()
+    plt.savefig(os.path.join(cfg.result_dir, 'normal_loss_histogram_0001.png')) 
     
 else:
     threshold = optim_ctx['threshold']
