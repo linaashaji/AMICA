@@ -131,10 +131,22 @@ if(optim_ctx['loss_mean'] == - 1 and optim_ctx['loss_variance'] == - 1):
     
     losses = run_statistics(model, log, val_loader, data_loader_ctx, loss_compute_val, device, verbose=cfg.print_freq)
     
-    plt.hist(losses)
+    print_log(f" Loss Max Value : {losses.max()}", log)
+    print_log(f" Loss Min Value : {losses.min()}", log)
+    print_log(f" Loss Mean Value : {losses.mean()}", log)
+    print_log(f" Loss Var Value : {losses.std()}", log)
+
+    print_log(f" Per Loss > 0.01 : {len(losses[losses > 0.01]) / len(losses)}", log)
+    print_log(f" Per Loss > 0.1 : {len(losses[losses > 0.1]) / len(losses)}", log)
+
+
+    plt.hist(losses, range=(losses.min(), losses.max()))
     plt.show()
-    plt.savefig(os.path.join(cfg.result_dir, 'normal_loss_histogram.png'))
-    
+    plt.savefig(os.path.join(cfg.result_dir, 'normal_loss_histogram_minmax.png'))
+
+    plt.hist(losses, range=(losses.min(), 0.01))
+    plt.show()
+    plt.savefig(os.path.join(cfg.result_dir, 'normal_loss_histogram_001.png')) 
     
 else:
     loss_mean = optim_ctx['loss_mean']
@@ -144,13 +156,12 @@ else:
     print_log(f"The validation variance loss is {loss_variance}", log)
     
     
-
-#%%  
-# print_log(" Start Testing ".center(70, "="), log)
-   
-# p_labels, gt_labels = run_test(model, log, val_loader, data_loader_ctx, loss_compute_val, loss_mean, loss_variance, device, verbose=50) 
+  
+    print_log(" Start Testing ".center(70, "="), log)
     
-# print(sum(p_labels) / len(p_labels))
+    p_labels, gt_labels = run_test(model, log, val_loader, data_loader_ctx, loss_compute_val, loss_mean, loss_variance, device, verbose=50) 
+        
+    print_log(f" Accuracy on normal data : {(len(p_labels) - sum(p_labels)) / len(p_labels)}", log)
     
     
     
