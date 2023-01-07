@@ -30,14 +30,14 @@ from utils.loss import L2Loss
 from models.model import MultiIDModel
 
 import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score, roc_curve
 
 timer = Timer()
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--cfg', default='multiagent_bert_test')
 parser.add_argument('--tmp', action='store_true', default=False)
-parser.add_argument('--val_test', type=int, default=0,
+parser.add_argument('--val_test', type=int, default=1,
                     help='0 if Validation, 1 if Test')
 parser.add_argument('--test_file', default='test_continuous')
 
@@ -107,6 +107,7 @@ val_loader = DataLoader(
         shuffle = False
 )
 
+print_log(f"Nb samples in validation set {''.ljust(8)} : {len(valdata)}", log)  
 
 if(args.val_test == 1):
     testdata = SynCanDataset(data_loader_ctx, args.test_file)
@@ -116,10 +117,8 @@ if(args.val_test == 1):
             num_workers=cfg.data_loader.num_workers,
             shuffle = False
     )
-
-
-
-print_log(f"Nb samples in validation set {''.ljust(8)} : {len(valdata)}", log)   
+    print_log(f"Nb samples in test set {''.ljust(14)} : {len(testdata)}", log)  
+ 
 
 print_log(f"Time spend : {timer.tak()}", log)
 
@@ -173,17 +172,22 @@ else:
     threshold = optim_ctx['threshold']
     
     print_log(f"The validation threshold is {threshold}", log)
-
-    print_log(" Start Testing ".center(70, "="), log)
     
     if(args.val_test == 0):
+        print_log(" Start Testing On Normal data ".center(70, "="), log)
+
         p_labels, gt_labels = run_test(model, log, val_loader, data_loader_ctx, loss_compute_val, threshold, device, verbose=50) 
         acc = accuracy_score(gt_labels, p_labels)     
         print_log(f" Accuracy on normal data : {acc*100} %", log)
     else:
+        print_log(f" Start Testing On {args.test_file} data ".center(70, "="), log)
         p_labels, gt_labels = run_test(model, log, test_loader, data_loader_ctx, loss_compute_val, threshold, device, verbose=50) 
         acc = accuracy_score(gt_labels, p_labels)
+        f1 = f1_score(gt_labels, p_labels)
+        roc = roc_curve(gt_labels, p_labels)
         print_log(f" Accuracy on {args.test_file} data : {acc*100} %", log)
+        print_log(f" F1 on {args.test_file} data : {f1}", log)
+        print_log(f" ROC on {args.test_file} data : {roc}", log)
         
     
     

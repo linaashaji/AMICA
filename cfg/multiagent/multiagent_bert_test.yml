@@ -15,14 +15,14 @@ data_loader:
 # ------------------- Model -------------------------
 
 model_id: MultiIDModel
-model_name: model_test_1
+model_name: model_test_2
 load_from: multiagent_bert/model_newexp_3
 
 
 # ------------------- Training Parameters -------------------------
 optim_params:  
   loss                         : 'l2loss'
-  threshold                    : -1
+  threshold                    : 0.01
 
 print_freq: 20
 
