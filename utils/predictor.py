@@ -78,17 +78,16 @@ def run_statistics(model, log, data_iter, data_ctx, loss_compute, device, verbos
             vout, _, _, _ = model(batch)
             vsorted = vout.flatten(0,1)[ind].reshape(batch_size,window_size,-1) 
             
-                
-            loss = loss_dict['loss'].mean() 
-            losses.append(float(loss))
+
+            losses.extend(list(loss_dict['loss'].detach().cpu().numpy()))
+
 
         if verbose > 0:
             if (i+1) % verbose == 0:
-                print_log(" Update step : %d Mean Loss : %f Var Loss : %f " %
-                      ( i, np.array(losses).mean(), np.array(losses).std()), log)
+                print_log(" Update step : %d " % i, log)
 
         
-    return np.array(losses).mean(), np.array(losses).std()
+    return np.array(losses)
 
 
 

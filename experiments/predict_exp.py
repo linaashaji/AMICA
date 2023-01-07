@@ -29,6 +29,7 @@ from utils.optimizer import SimpleLossCompute
 from utils.loss import L2Loss
 from models.model import MultiIDModel
 
+import matplotlib.pyplot as plt
 
 timer = Timer()
 
@@ -128,10 +129,12 @@ if(optim_ctx['loss_mean'] == - 1 and optim_ctx['loss_variance'] == - 1):
     print_log(" Start loss statistics calculation ".center(70, "="), log)
     
     
-    loss_mean, loss_variance = run_statistics(model, log, val_loader, data_loader_ctx, loss_compute_val, device, verbose=cfg.print_freq)
+    losses = run_statistics(model, log, val_loader, data_loader_ctx, loss_compute_val, device, verbose=cfg.print_freq)
     
-    print_log(f"The validation mean loss is {loss_mean}", log)
-    print_log(f"The validation variance loss is {loss_variance}", log)
+    plt.hist(losses)
+    plt.show()
+    plt.savefig(os.path.join(cfg.result_dir, 'normal_loss_histogram.png'))
+    
     
 else:
     loss_mean = optim_ctx['loss_mean']
@@ -143,11 +146,11 @@ else:
     
 
 #%%  
-print_log(" Start Testing ".center(70, "="), log)
+# print_log(" Start Testing ".center(70, "="), log)
    
-p_labels, gt_labels = run_test(model, log, val_loader, data_loader_ctx, loss_compute_val, loss_mean, loss_variance, device, verbose=50) 
+# p_labels, gt_labels = run_test(model, log, val_loader, data_loader_ctx, loss_compute_val, loss_mean, loss_variance, device, verbose=50) 
     
-print(sum(p_labels) / len(p_labels))
+# print(sum(p_labels) / len(p_labels))
     
     
     
