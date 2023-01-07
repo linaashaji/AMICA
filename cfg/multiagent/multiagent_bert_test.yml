@@ -23,11 +23,7 @@ load_from: multiagent_bert/model_newexp_3
 optim_params:  
   loss                         : 'l2loss'
 
-<<<<<<< HEAD
-print_freq                   : 200
-=======
 
 print_freq                   : 100
 model_save_freq              : 10
->>>>>>> 2e9e35015de4e8983b34456ce8279a0beac0b05c
 
