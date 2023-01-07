@@ -24,7 +24,7 @@ from utils.timer import Timer
 from utils.utils import seed_all, load_model_best, print_log, get_timestring
 from utils.config import Config
 
-from utils.predictor import run_statistics
+from utils.predictor import run_statistics, run_test
 from utils.optimizer import SimpleLossCompute
 from utils.loss import L2Loss
 from models.model import MultiIDModel
@@ -123,11 +123,32 @@ loss_compute_val = SimpleLossCompute(criterion, None)
 
 #%%
 
-print_log('\n',log)
-print_log(" Start loss statistics calculation ".center(70, "="), log)
+if(optim_ctx['loss_mean'] == - 1 and optim_ctx['loss_variance'] == - 1):
+    print_log('\n',log)
+    print_log(" Start loss statistics calculation ".center(70, "="), log)
+    
+    
+    loss_mean, loss_variance = run_statistics(model, log, val_loader, data_loader_ctx, loss_compute_val, device, verbose=cfg.print_freq)
+    
+    print_log(f"The validation mean loss is {loss_mean}", log)
+    print_log(f"The validation variance loss is {loss_variance}", log)
+    
+else:
+    loss_mean = optim_ctx['loss_mean']
+    loss_variance = optim_ctx['loss_variance']
+    
+    print_log(f"The validation mean loss is {loss_mean}", log)
+    print_log(f"The validation variance loss is {loss_variance}", log)
+    
+    
 
-
-loss_mean, loss_var = run_statistics(model, log, val_loader, data_loader_ctx, loss_compute_val, device, verbose=cfg.print_freq)
-
-print_log(f"the final mean loss is {loss_mean}", log)
-print_log(f"the final var loss is {loss_var}", log)
+#%%  
+print_log(" Start Testing ".center(70, "="), log)
+   
+p_labels, gt_labels = run_test(model, log, val_loader, data_loader_ctx, loss_compute_val, loss_mean, loss_variance, device, verbose=50) 
+    
+print(sum(p_labels) / len(p_labels))
+    
+    
+    
+    

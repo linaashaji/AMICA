@@ -22,6 +22,8 @@ load_from: multiagent_bert/model_newexp_3
 # ------------------- Training Parameters -------------------------
 optim_params:  
   loss                         : 'l2loss'
+  loss_mean                    : 0.00044419
+  loss_variance                : 0.00015839
 
 print_freq                   : 100
 
