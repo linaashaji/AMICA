@@ -124,7 +124,7 @@ loss_compute_val = SimpleLossCompute(criterion, None)
 
 #%%
 
-if(optim_ctx['loss_mean'] == - 1 and optim_ctx['loss_variance'] == - 1):
+if(optim_ctx['threshold'] == - 1):
     print_log('\n',log)
     print_log(" Start loss statistics calculation ".center(70, "="), log)
     
@@ -149,17 +149,13 @@ if(optim_ctx['loss_mean'] == - 1 and optim_ctx['loss_variance'] == - 1):
     plt.savefig(os.path.join(cfg.result_dir, 'normal_loss_histogram_001.png')) 
     
 else:
-    loss_mean = optim_ctx['loss_mean']
-    loss_variance = optim_ctx['loss_variance']
+    threshold = optim_ctx['threshold']
     
-    print_log(f"The validation mean loss is {loss_mean}", log)
-    print_log(f"The validation variance loss is {loss_variance}", log)
-    
-    
-  
+    print_log(f"The validation threshold is {threshold}", log)
+
     print_log(" Start Testing ".center(70, "="), log)
     
-    p_labels, gt_labels = run_test(model, log, val_loader, data_loader_ctx, loss_compute_val, loss_mean, loss_variance, device, verbose=50) 
+    p_labels, gt_labels = run_test(model, log, val_loader, data_loader_ctx, loss_compute_val, threshold, device, verbose=50) 
         
     print_log(f" Accuracy on normal data : {(len(p_labels) - sum(p_labels)) / len(p_labels)}", log)
     

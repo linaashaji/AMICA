@@ -93,7 +93,7 @@ def run_statistics(model, log, data_iter, data_ctx, loss_compute, device, verbos
 
 
 
-def run_test(model, log, data_iter, data_ctx, loss_compute, loss_mean, loss_variance, device, verbose=50):
+def run_test(model, log, data_iter, data_ctx, loss_compute, threshold, device, verbose=50):
 
     model.eval()
 
@@ -166,7 +166,7 @@ def run_test(model, log, data_iter, data_ctx, loss_compute, loss_mean, loss_vari
             
             
         for bl, gt in zip(batch_loss, batch['label']):
-            r = bl - loss_mean - loss_variance
+            r = bl - threshold
             if((r>0).any()):
                 predicted_labels.append(1)
             else:
