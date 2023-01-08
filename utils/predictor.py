@@ -12,6 +12,7 @@ import torch
 from .timer import Timer
 from .utils import print_log, batch_to_device
 import numpy as np
+from tqdm import tqdm
 
 timer = Timer()
 
@@ -106,7 +107,7 @@ def run_test(model, log, data_iter, data_ctx, loss_compute, threshold, device, v
     
     total_count = 0
     
-    for i, batch in enumerate(data_iter):
+    for i, batch in tqdm(enumerate(data_iter)):
         
         total_count +=1
      
