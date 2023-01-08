@@ -64,6 +64,8 @@ print_log(" Instanciating model ".center(70, "="), log)
 if(args.val_test==1 and (args.test_file == 'test_suppress' or args.test_file=='flooding')):
     model_ctx_update = {}
     model_ctx_update['input_max_len'] = [5000] * 10
+else:
+    model_ctx_update = None
 
 model, state = load_model_best(MultiIDModel, cfg.load_from, device, model_ctx_update)
 

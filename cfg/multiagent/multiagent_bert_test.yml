@@ -7,15 +7,15 @@ data_path                    : data
 
 # ------------------- Feature Extractor -------------------------
 data_loader:
-  batch_size                  : 2
+  batch_size                  : 16
   window                      : 5000
   stride                      : 1000
-  num_workers                 : 0
+  num_workers                 : 32
 
 # ------------------- Model -------------------------
 
 model_id: MultiIDModel
-model_name: model_test_2
+model_name: model_test_3
 load_from: multiagent_bert/model_newexp_3
 
 
