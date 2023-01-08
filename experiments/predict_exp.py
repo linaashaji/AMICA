@@ -9,6 +9,7 @@ import os, sys
 import argparse
 import torch
 from torch.utils.tensorboard import SummaryWriter
+import pickle
 
 ROOT_DIRECTORY = './../'
 ROOT_DIRECTORY = os.path.abspath( os.path.join(os.getcwd(), ROOT_DIRECTORY) )
@@ -188,19 +189,22 @@ else:
     else:
         print_log(f" Start Testing On {args.test_file} data ".center(70, "="), log)
         p_labels, gt_labels = run_test(model, log, test_loader, data_loader_ctx, loss_compute_val, threshold, device, verbose=50) 
-        acc = accuracy_score(gt_labels, p_labels)
-        f1 = f1_score(gt_labels, p_labels)
-        roc = roc_curve(gt_labels, p_labels)
-        recall = recall_score(gt_labels, p_labels)
-        print_log(f" Accuracy on {args.test_file} data : {acc*100} %", log)
-        print_log(f" F1 on {args.test_file} data : {f1}", log)
-        print_log(f" Recall on {args.test_file} data : {recall}", log)
-        print_log(f" ROC on {args.test_file} data : {roc}", log)
         
-    
+        try:
+            with open(f'{os.path.join(cfg.result_dir, args.test_file)}_predictions.pkl', 'wb') as f:
+                pickle.dump(p_labels, f)
+            with open(f'{os.path.join(cfg.result_dir, args.test_file)}_labels.pkl', 'wb') as f:
+                pickle.dump(gt_labels, f)
+                
+                print('Predictions saved successfully')
+        except:
+            print('Error on saving data')
         
-    
-    
-    
-    
-    
+        # acc = accuracy_score(gt_labels, p_labels)
+        # f1 = f1_score(gt_labels, p_labels)
+        # roc = roc_curve(gt_labels, p_labels)
+        # recall = recall_score(gt_labels, p_labels)
+        # print_log(f" Accuracy on {args.test_file} data : {acc*100} %", log)
+        # print_log(f" F1 on {args.test_file} data : {f1}", log)
+        # print_log(f" Recall on {args.test_file} data : {recall}", log)
+        # print_log(f" ROC on {args.test_file} data : {roc}", log)
