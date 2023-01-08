@@ -31,7 +31,8 @@ class FixedTemporalEmbedding(nn.Module):
         pos_encoding[:, 1::2] = torch.cos( position * div_term )
         pos_encoding = pos_encoding.unsqueeze(0)
         
-        self.register_buffer('pos_encoding', pos_encoding)
+        #self.register_buffer('pos_encoding', pos_encoding)
+        self.pos_encoding = pos_encoding
         
     def forward(self, x):
         
@@ -39,7 +40,8 @@ class FixedTemporalEmbedding(nn.Module):
         batch_size = x.size(0)
         
         x = self.w1(x) 
-        pos_enc = self.pos_encoding.repeat_interleave( batch_size, dim=0 )
+        pos_enc = self.pos_encoding.repeat_interleave( batch_size, dim=0 ).to(x.device)
+        
         x = x + pos_enc[:, :obs_length]
 
         

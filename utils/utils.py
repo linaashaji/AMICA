@@ -121,7 +121,7 @@ def load_state_best(model, model_opt, model_path, device):
 
 
 
-def load_model_best(model_fn, model_path, device):
+def load_model_best(model_fn, model_path, device, model_ctx_update):
     epoch_start = 0
     checkpoint_filepath = model_path
     checkpoint = None
@@ -143,7 +143,13 @@ def load_model_best(model_fn, model_path, device):
 
             checkpoint = torch.load( os.path.join(checkpoint_filepath, file), map_location=device)
             model_ctx = checkpoint['model_params']
+            
+            if(model_ctx_update is not None):
+                for k, v in zip(model_ctx_update.keys(), model_ctx_update.values()): 
+                    model_ctx[k] = v
+            
             model = model_fn(model_ctx).to(device)
+            
             try:
                 print("    ", model.load_state_dict( checkpoint['model_state_dict'] ) )
                 model.to(device)

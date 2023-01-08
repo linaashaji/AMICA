@@ -30,7 +30,7 @@ from utils.loss import L2Loss
 from models.model import MultiIDModel
 
 import matplotlib.pyplot as plt
-from sklearn.metrics import accuracy_score, f1_score, roc_curve
+from sklearn.metrics import accuracy_score, f1_score, roc_curve, recall_score
 
 timer = Timer()
 
@@ -39,7 +39,7 @@ parser.add_argument('--cfg', default='multiagent_bert_test')
 parser.add_argument('--tmp', action='store_true', default=False)
 parser.add_argument('--val_test', type=int, default=1,
                     help='0 if Validation, 1 if Test')
-parser.add_argument('--test_file', default='test_continuous')
+parser.add_argument('--test_file', default='test_suppress')
 
 args = parser.parse_args()
 
@@ -61,7 +61,11 @@ print_log(" Instanciating model ".center(70, "="), log)
 
 
 ### Loading pretrained model
-model, state = load_model_best(MultiIDModel, cfg.load_from, device)
+if(args.val_test==1 and (args.test_file == 'test_suppress' or args.test_file=='flooding')):
+    model_ctx_update = {}
+    model_ctx_update['input_max_len'] = [5000] * 10
+
+model, state = load_model_best(MultiIDModel, cfg.load_from, device, model_ctx_update)
 
 n_total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print_log(f" Number of learnable params {n_total_params}".ljust(30), log)
@@ -185,9 +189,13 @@ else:
         acc = accuracy_score(gt_labels, p_labels)
         f1 = f1_score(gt_labels, p_labels)
         roc = roc_curve(gt_labels, p_labels)
+        recall = recall_score(gt_labels, p_labels)
         print_log(f" Accuracy on {args.test_file} data : {acc*100} %", log)
         print_log(f" F1 on {args.test_file} data : {f1}", log)
+        print_log(f" Recall on {args.test_file} data : {recall}", log)
         print_log(f" ROC on {args.test_file} data : {roc}", log)
+        
+    
         
     
     
