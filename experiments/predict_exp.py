@@ -39,7 +39,7 @@ parser.add_argument('--cfg', default='multiagent_bert_test')
 parser.add_argument('--tmp', action='store_true', default=False)
 parser.add_argument('--val_test', type=int, default=1,
                     help='0 if Validation, 1 if Test')
-parser.add_argument('--test_file', default='test_suppress')
+parser.add_argument('--test_file', default='test_flooding')
 
 args = parser.parse_args()
 
@@ -61,7 +61,7 @@ print_log(" Instanciating model ".center(70, "="), log)
 
 
 ### Loading pretrained model
-if(args.val_test==1 and (args.test_file == 'test_suppress' or args.test_file=='flooding')):
+if(args.val_test==1 and (args.test_file == 'test_suppress' or args.test_file=='test_flooding')):
     model_ctx_update = {}
     model_ctx_update['input_max_len'] = [5000] * 10
 else:
